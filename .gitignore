@@ -1,3 +1,8 @@
+kaggle_dataset.zip
+kaggle_dataset/
+.idea
+.gitattributes
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
