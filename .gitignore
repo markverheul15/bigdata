@@ -1,7 +1,6 @@
-kaggle_dataset.zip
-kaggle_dataset/
 .idea
 .gitattributes
+IMDB_movie_2020/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
