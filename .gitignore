@@ -131,3 +131,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/Data/archive (1).zip
+/Data/name_basics.tsv
+/Data/title_akas.tsv
+/Data/title_basic.tsv
+/Data/title_crew.tsv
+/Data/title_rating.tsv
