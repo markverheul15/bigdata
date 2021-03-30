@@ -78,7 +78,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
             chunk = pd.read_csv('IMDB_movie_2020/{}'.format(file), sep='\t', chunksize=1000000,
                                 low_memory=False)
             df = pd.concat(chunk)
-            if file == "title_akas.tsv" or file == "name_basics.tsv":
+            if file == "name_basics.tsv":
                 df.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
             df.to_sql(table, dbConnection, if_exists='append', chunksize=1000000, index=False)
         except ValueError as vx:
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS name_basics (
 
 create_title_akas_table = """
 CREATE TABLE IF NOT EXISTS title_akas (
-  titleId VARCHAR(255) NOT NULL PRIMARY KEY,
+  titleId VARCHAR(255) NOT NULL,
   ordering INT,
   title MEDIUMTEXT,
   region VARCHAR(255),

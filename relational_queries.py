@@ -46,9 +46,7 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# Query 1:
-title_akas = "SELECT * FROM title_akas limit 10"
-title_akas = execute_read_query(connection, title_akas)
+# Query 1: Which actors are a minor?
 
 # for x in title_akas:
 #     print(x)
@@ -60,7 +58,7 @@ movies_top250 = """SELECT originalTitle, averageRating
                     ON IMDB_movie_2020.title_rating.tconst = IMDB_movie_2020.title_basic.tconst
                     WHERE IMDB_movie_2020.title_basic.titleType = "movie" and IMDB_movie_2020.title_rating.numVotes > 100000
                     ORDER BY IMDB_movie_2020.title_rating.averageRating DESC
-                    LIMIT 10;"""
+                    LIMIT 250;"""
 
 start_time = time.time()
 movies_top250 = execute_read_query(connection, movies_top250)
@@ -68,3 +66,26 @@ movies_top250 = execute_read_query(connection, movies_top250)
 for movie in movies_top250:
     print(movie)
 print("--- %s seconds ---" % (time.time() - start_time))
+
+# Query 3: Which director has directed the most movies?
+
+# Query 4: Which genre is represented the most?
+
+# Query 5: Which actors play in Inception?
+
+# Query 6: Remove non original titles from dataset title_akas
+
+
+
+
+
+# Query 1: Remove \N values from name_basics table and change column types to correct datatype
+# Query 2: Which actors are a minor?
+# Query 3: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
+# Query 4: Which director has directed the most movies?
+# Query 5: How many movies are rom-coms?
+# Query 6: Find all unique genres?
+# Query 7: Which genre is represented the most?
+# Query 8: Which actors play in Inception?
+# Query 9: Remove non original titles from dataset title_akas
+# Query 10: Change all the words 'Lake' into 'Sea' in the title
