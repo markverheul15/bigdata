@@ -5,8 +5,8 @@ from mysql.connector import Error
 from sqlalchemy import create_engine
 
 
-# Connect to MySQL server
 def create_connection_server(host_name, user_name, user_password):
+    """Connect to MySQL server"""
     connection = None
     try:
         connection = mysql.connector.connect(
@@ -21,8 +21,8 @@ def create_connection_server(host_name, user_name, user_password):
     return connection
 
 
-# Create databse in MySQL server
 def create_database(connection, query):
+    """Create database in MySQL server"""
     cursor = connection.cursor()
     try:
         cursor.execute(query)
@@ -31,8 +31,8 @@ def create_database(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# Connect to MySQL database in server
 def create_connection_db(host_name, user_name, user_password, db_name):
+    """Connect to MySQL database in server"""
     connection = None
     try:
         connection = mysql.connector.connect(
@@ -48,8 +48,8 @@ def create_connection_db(host_name, user_name, user_password, db_name):
     return connection
 
 
-# Execute queries in specific tables
 def execute_query(connection, query):
+    """Execute queries in specific tables"""
     cursor = connection.cursor()
     try:
         cursor.execute(query)
@@ -57,6 +57,38 @@ def execute_query(connection, query):
         print("Query executed successfully")
     except Error as e:
         print(f"The error '{e}' occurred")
+
+
+def mysql_import(host_name, user_name, user_password, db_name, directory):
+    """Import csv from directory and insert dataset via pandas to SQL"""
+
+    # Create and connect to SQL engine
+    engine = create_engine("mysql+pymysql://{}:{}@{}/{}"
+                           .format(user_name, user_password, host_name,
+                                   db_name))
+    dbConnection = engine.connect()
+
+    # Access all dataset files in directory
+    for file in os.listdir(directory):
+        print("{} will now be inserted into the MySQL dataset".format(file))
+        table = file[:-4]
+
+        # Insert datasets into database table via pandas to SQL
+        try:
+            chunk = pd.read_csv('IMDB_movie_2020/{}'.format(file), sep='\t', chunksize=1000000,
+                                low_memory=False)
+            df = pd.concat(chunk)
+            if file == "title_akas.tsv" or file == "name_basics.tsv":
+                df.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
+            df.to_sql(table, dbConnection, if_exists='append', chunksize=1000000, index=False)
+        except ValueError as vx:
+            print(vx)
+        except Exception as ex:
+            print(ex)
+        else:
+            print("{} dataset has been inserted".format(table))
+
+    return 0
 
 
 # Define dataset tables
@@ -133,26 +165,4 @@ execute_query(connection, create_title_basic_table)
 execute_query(connection, create_title_crew_table)
 execute_query(connection, create_title_rating_table)
 
-# Create and connect to SQL engine
-engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
-                       .format(user="root", pw=password,
-                               db='IMDB_movie_2020'))
-dbConnection = engine.connect()
-directory = "IMDB_movie_2020/"
-
-# Insert datasets into database table via SQLalchemy engine
-for file in os.listdir(directory):
-    print("{} will now be inserted into the MySQL dataset".format(file))
-    table = file[:-4]
-    try:
-        chunk = pd.read_csv('IMDB_movie_2020/{}'.format(file), sep='\t', chunksize=1000000, low_memory=False)
-        df = pd.concat(chunk)
-        if file == "title_akas.tsv" or file == "name_basics.tsv":
-            df.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
-        df.to_sql(table, dbConnection, if_exists='append', chunksize=1000000, index=False)
-    except ValueError as vx:
-        print(vx)
-    except Exception as ex:
-        print(ex)
-    else:
-        print("{} dataset has been inserted".format(table))
+mysql_import("localhost", "root", password, 'IMDB_movie_2020', "IMDB_movie_2020/")
