@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS title_rating (
 """
 
 # Initialize MySQL server and connect to local database
-password = "DFGZrzc9bm6Qg}P-"
+password = "mysql123"
 # password = "ilemlbseicmzt2501527"
 connection = create_connection_server("localhost", "root", password)
 
@@ -133,7 +133,7 @@ execute_query(connection, create_title_basic_table)
 execute_query(connection, create_title_crew_table)
 execute_query(connection, create_title_rating_table)
 
-# Create SQL
+# Create and connect to SQL engine
 engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
                        .format(user="root", pw=password,
                                db='IMDB_movie_2020'))
