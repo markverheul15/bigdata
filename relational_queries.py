@@ -46,19 +46,39 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# Query 1: Which actors are a minor?
+# Query 1: Remove \N values from name_basics table and change column types to correct datatype
+remove_values = """
+"""
 
-# for x in title_akas:
-#     print(x)
 
-# Query 2: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
-movies_top250 = """SELECT originalTitle, averageRating
-                    FROM IMDB_movie_2020.title_rating
-                    LEFT JOIN IMDB_movie_2020.title_basic
-                    ON IMDB_movie_2020.title_rating.tconst = IMDB_movie_2020.title_basic.tconst
-                    WHERE IMDB_movie_2020.title_basic.titleType = "movie" and IMDB_movie_2020.title_rating.numVotes > 100000
-                    ORDER BY IMDB_movie_2020.title_rating.averageRating DESC
-                    LIMIT 250;"""
+# Query 2: Which actors are a minor?
+minor_actors = """
+SELECT primaryName
+FROM IMDB_movie_2020.name_basics
+WHERE IMDB_movie_2020.name_basics.birthYear >  EXTRACT(YEAR FROM CURRENT_DATE) - 18
+AND (IMDB_movie_2020.name_basics.primaryProfession LIKE "actor" 
+    OR  IMDB_movie_2020.name_basics.primaryProfession LIKE "actress");
+"""
+# --  and IMDB_movie_2020.name_basics.deathYear is not null;
+
+start_time = time.time()
+minor_actors = execute_read_query(connection, minor_actors)
+
+for minors in minor_actors:
+    print(minors)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+
+# Query 3: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
+movies_top250 = """
+SELECT originalTitle, averageRating
+FROM IMDB_movie_2020.title_rating
+LEFT JOIN IMDB_movie_2020.title_basic
+ON IMDB_movie_2020.title_rating.tconst = IMDB_movie_2020.title_basic.tconst
+WHERE IMDB_movie_2020.title_basic.titleType = "movie" and IMDB_movie_2020.title_rating.numVotes > 100000
+ORDER BY IMDB_movie_2020.title_rating.averageRating DESC
+LIMIT 250;
+"""
 
 start_time = time.time()
 movies_top250 = execute_read_query(connection, movies_top250)
@@ -67,25 +87,53 @@ for movie in movies_top250:
     print(movie)
 print("--- %s seconds ---" % (time.time() - start_time))
 
-# Query 3: Which director has directed the most movies?
-
-# Query 4: Which genre is represented the most?
-
-# Query 5: Which actors play in Inception?
-
-# Query 6: Remove non original titles from dataset title_akas
-
-
-
-
-
-# Query 1: Remove \N values from name_basics table and change column types to correct datatype
-# Query 2: Which actors are a minor?
-# Query 3: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
 # Query 4: Which director has directed the most movies?
 # Query 5: How many movies are rom-coms?
 # Query 6: Find all unique genres?
 # Query 7: Which genre is represented the most?
+
+
 # Query 8: Which actors play in Inception?
+inception = """
+SELECT tconst, originalTitle
+FROM IMDB_movie_2020.title_basic
+WHERE titleType = "movie" AND originalTitle = "Inception";
+"""
+
+start_time = time.time()
+inception = execute_read_query(connection, inception)
+
+for actors in inception:
+    print(actors)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+
 # Query 9: Remove non original titles from dataset title_akas
+originals = """
+SELECT title
+FROM IMDB_movie_2020.title_akas
+WHERE isOriginalTitle = 1;
+"""
+
+start_time = time.time()
+originals = execute_read_query(connection, originals)
+
+for original in originals:
+    print(original)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+
 # Query 10: Change all the words 'Lake' into 'Sea' in the title
+
+lake_sea = """
+SELECT originalTitle, REPLACE( originalTitle, 'Lake', 'Sea' ) as new_originalTitle
+FROM IMDB_movie_2020.title_basic
+WHERE originalTitle LIKE "%Lake%";
+"""
+
+start_time = time.time()
+lake_sea = execute_read_query(connection, lake_sea)
+
+for x in lake_sea:
+    print(x)
+print("--- %s seconds ---" % (time.time() - start_time))
