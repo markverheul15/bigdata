@@ -1,6 +1,7 @@
 import mysql.connector
 import os
 import pandas as pd
+import time
 from mysql.connector import Error
 from sqlalchemy import create_engine
 
@@ -71,6 +72,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
     # Access all dataset files in directory
     for file in os.listdir(directory):
         print("{} will now be inserted into the MySQL dataset".format(file))
+        start_time = time.time()
         table = file[:-4]
 
         # Insert datasets into database table via pandas to SQL
@@ -87,7 +89,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
             print(ex)
         else:
             print("{} dataset has been inserted".format(table))
-
+            print("--- %s seconds ---" % (time.time() - start_time))
     return 0
 
 
