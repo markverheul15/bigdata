@@ -47,6 +47,34 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
+# Execute single query
+def run_single_query(query_x):
+    start_time = time.time()
+    query = execute_read_query(connection, query_x)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    for row in query:
+        print(row)
+
+    return 0
+
+
+def run_all_queries(list_of_queries):
+    f = open("times_mysql.txt", "a")
+    queryx = 2
+    for query in list_of_queries:
+        start_time = time.time()
+        query = execute_read_query(connection, query)
+        new_time = ("Query%s %s seconds ---\n" % (queryx, (time.time() - start_time)))
+        f.writelines(new_time)
+
+        # optional: uncomment is you want to print it
+        # for row in query:
+        #     print(row)
+
+        queryx += 1
+
+
 # Query 2: Which IMDB info is from the Netherlands, order by title?
 imdb_NL = """
 SELECT *
@@ -135,33 +163,6 @@ DELETE FROM IMDB_movie_2020.title_akas WHERE isOriginalTitle = 0;
 all_queries = [imdb_NL, rom_com, minors, movies_top250, inception,
                lake_to_sea, add_students, recommended, remove_non_originals]
 
-# Execute single query
-def run_single_query(query_x):
-    start_time = time.time()
-    query = execute_read_query(connection, query_x)
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-    for row in query:
-        print(row)
-
-    return 0
-
-run_single_query(movies_top250)
-
-def run_all_queries(list_of_queries):
-
-    f = open("times_sql.txt", "a")
-    queryx = 2
-    for query in list_of_queries:
-        start_time = time.time()
-        query = execute_read_query(connection, query)
-        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
-        f.writelines(new_time)
-
-        # optional: uncomment is you want to print it
-        # for row in query:
-        #     print(row)
-
-        queryx += 1
+# run_single_query(movies_top250)
 
 run_all_queries(all_queries)
