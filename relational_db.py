@@ -74,7 +74,6 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
     # Access all dataset files in directory
     for file in os.listdir(directory):
         print("{} will now be inserted into the MySQL dataset".format(file))
-        start_time = time.time()
         table = file[:-4]
 
         # Insert datasets into database table via pandas to SQL
@@ -84,6 +83,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
             df = pd.concat(chunk)
             if file == "name_basics.tsv":
                 df.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
+            start_time = time.time()
             df.to_sql(table, dbConnection, if_exists='append', chunksize=1000000, index=False)
             next_time = ("%s dataset took %s seconds ---\n" % (table, (time.time() - start_time)))
             f.writelines(next_time)

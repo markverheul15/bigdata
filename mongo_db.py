@@ -18,7 +18,7 @@ def mongo_import(db_name, directory):
                             low_memory=False)
         data = pd.concat(chunk)
         if file == "name_basics.tsv":
-            data.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
+            data.drop_duplicates(subset=[data.columns[0]], keep='first', inplace=True)
         db = client[db_name]
         collection = db[table]
         data.reset_index(inplace=True)
@@ -27,7 +27,6 @@ def mongo_import(db_name, directory):
         # Insert collection
         start_time = time.time()
         collection.insert_many(data_dict)
-        start_time = time.time()
         print("{} dataset has been inserted".format(table))
         print("--- %s seconds ---" % (time.time() - start_time))
         next_time = ("%s dataset took %s seconds ---\n" % (table, (time.time() - start_time)))

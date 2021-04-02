@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import Error
 import time
 
+
 def create_connection_db(host_name, user_name, user_password, db_name):
     connection = None
     try:
@@ -46,9 +47,6 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# Query 1: Remove \N values from name_basics table and change column types to correct datatype
-remove_values = """
-"""
 # Query 2: Which IMDB info is from the Netherlands, order by title?
 imdb_NL = """
 SELECT *
@@ -57,18 +55,7 @@ WHERE region = "NL"
 ORDER BY title;
 """
 
-#Query 3: Which movies are in Dutch, order by title?
-movies_NL = """
-SELECT title
-FROM IMDB_movie_2020.title_akas as akas
-LEFT JOIN IMDB_movie_2020.title_basic as basic
-ON akas.titleID = basic.tconst
-WHERE akas.region = "NL" AND basic.titleType = "movie"
-ORDER BY title;
-"""
-
-# Query 4: How many movies are rom-coms?
-# output: (13422,)
+# Query 3: How many movies are rom-coms?
 rom_com = """
 SELECT count(*)
 FROM IMDB_movie_2020.title_basic
@@ -77,26 +64,14 @@ AND genres LIKE "%Comedy%"
 AND titleType = "movie";
 """
 
-# Query 5: Which actors are a minor?
-# output:
-# ('James Walsh',)
-# ('Klim Berdinskiy',)
-# ('Elias Richard Siegmann',) ...
-minor_actors = """
+# Query 4: Select all minors in name_basics.
+minors = """
 SELECT primaryName
 FROM IMDB_movie_2020.name_basics
-WHERE IMDB_movie_2020.name_basics.birthYear >  EXTRACT(YEAR FROM CURRENT_DATE) - 18
-AND (IMDB_movie_2020.name_basics.primaryProfession LIKE "actor"
-    OR  IMDB_movie_2020.name_basics.primaryProfession LIKE "actress");
+WHERE IMDB_movie_2020.name_basics.birthYear >  EXTRACT(YEAR FROM CURRENT_DATE) - 18;
 """
 
-# Query 6: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
-# output:
-# ('The Shawshank Redemption', 9.3)
-# ('The Godfather', 9.2)
-# ('The Godfather: Part II', 9.0)
-# ('The Dark Knight', 9.0)
-# ('12 Angry Men', 8.9) ...
+# Query 5: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
 movies_top250 = """
 SELECT originalTitle, averageRating
 FROM IMDB_movie_2020.title_rating
@@ -107,14 +82,11 @@ ORDER BY IMDB_movie_2020.title_rating.averageRating DESC
 LIMIT 250;
 """
 
-# Query 7: Which actors play in Inception?
-# output: ('Leonardo DiCaprio',)
-#         ('Tom Berenger',) ...
+# Query 6: Which (male) actors play in Inception?
 inception = """
 SELECT primaryName
 FROM IMDB_movie_2020.name_basics
-WHERE (primaryProfession LIKE "%actor%"
-OR primaryProfession LIKE "%actress%")
+WHERE primaryProfession LIKE "%actor%"
 AND knownForTitles LIKE CONCAT("%", (
 SELECT  tconst
 FROM IMDB_movie_2020.title_basic
@@ -122,17 +94,14 @@ WHERE titleType = "movie" AND originalTitle = "Inception"
 AND tconst is not null),"%");
 """
 
-# Query 8: Change all the words 'Lake' into 'Sea' in the title
-# output: ('The Lady of the Lake', 'The Lady of the Sea')
-#         ('Le clown et ses chiens',) ...
+# Query 7: Change all the words 'Lake' into 'Sea' in the title
 lake_to_sea = """
 SELECT originalTitle, REPLACE( originalTitle, 'Lake', 'Sea' ) as new_originalTitle
 FROM IMDB_movie_2020.title_basic
 WHERE originalTitle LIKE "%Lake%";
 """
 
-
-# Query 9: Add four new rows in name_basics (personal information)
+# Query 8: Add four new rows in name_basics (personal information)
 add_students = """
 INSERT INTO IMDB_movie_2020.name_basics (nconst, primaryName, birthYear, primaryProfession)
 VALUES	("uva1", "Julia Holst", 1997, "student data science"),
@@ -141,38 +110,58 @@ VALUES	("uva1", "Julia Holst", 1997, "student data science"),
                 ("uva4", "Mark Verheul", 1994, "student data science");
 """
 
-# Query 10: Add recommended column based on rating 8+
+# Query 9: Add recommended column based on rating 8+
 recommended = """
 SELECT averageRating,
-IF (averageRating > 8,'Watch this','Skip this') AS tip 
+IF (averageRating >= 8,'Watch this','Skip this') AS tip 
 FROM IMDB_movie_2020.title_rating;
 """
 
-# Query 11: Remove all non original from akas table
+# Query 10: Remove all non original from akas table
 remove_non_originals = """
 DELETE FROM IMDB_movie_2020.title_akas WHERE isOriginalTitle = 0;
 """
 
-
-
-
-# Query 1: Remove \N values from name_basics table and change column types to correct datatype
 # Query 2 = imdb_NL
-# Query 3 = movies_NL
-# Query 4 = rom_com
-# Query 5 = minor_actors
-# Query 6 = movies_top250
-# Query 7 = inception
-# Query 8 = lake_to_sea
-# Query 9 = add_students
-# Query 10 = recommended
-# Query 11 = remove_non_originals
+# Query 3 = rom_com
+# Query 4 = minors
+# Query 5 = movies_top250
+# Query 6 = inception
+# Query 7 = lake_to_sea
+# Query 8 = add_students
+# Query 9 = recommended
+# Query 10 = remove_non_originals
 
-# Query 11?: DELETE FROM IMDB_movie_2020.title_akas WHERE isOriginalTitle = 1;
+all_queries = [imdb_NL, rom_com, minors, movies_top250, inception,
+               lake_to_sea, add_students, recommended, remove_non_originals]
 
-query_x = recommended
-start_time = time.time()
-query = execute_read_query(connection, query_x)
-for row in query:
-    print(row)
-print("--- %s seconds ---" % (time.time() - start_time))
+# Execute single query
+def run_single_query(query_x):
+    start_time = time.time()
+    query = execute_read_query(connection, query_x)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    for row in query:
+        print(row)
+
+    return 0
+
+run_single_query(movies_top250)
+
+def run_all_queries(list_of_queries):
+
+    f = open("times_sql.txt", "a")
+    queryx = 2
+    for query in list_of_queries:
+        start_time = time.time()
+        query = execute_read_query(connection, query)
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        f.writelines(new_time)
+
+        # optional: uncomment is you want to print it
+        # for row in query:
+        #     print(row)
+
+        queryx += 1
+
+run_all_queries(all_queries)
