@@ -48,7 +48,8 @@ def query2():
         pprint(x)
 
 # ✅Query 3: Which movies are in Dutch, order by title?
-
+def query3():
+    pass
 
 # ✅Query 4: How many movies are rom-com?
 def query4():
@@ -117,7 +118,8 @@ def query6():
         print('{0}'.format(movie['title']))
 
 # Query 7: Which actors play in Inception?
-
+def query7():
+    pass
 
 # Query 8: Change all the words 'Lake' into 'Sea' in the title
 def query8():
@@ -140,7 +142,6 @@ def query9():
     for x in resultsq9:
         print('{0}'.format(x['primaryName']))
 
-
 # ✅Query 10: Add recommended column based on rating 8+
 def query10():
 
@@ -154,12 +155,62 @@ def query11():
     coll_title_akas.delete_many({ "isOriginalTitle":0})
 
 def run_all():
+    queryx = 1
     with open('times.txt', mode='w') as f:
         start_time = time.time()
-        new_time = ("--- %s seconds ---\n" % (time.time() - start_time))
+        query1()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
         f.writelines(new_time)
         start_time = time.time()
-        new_time = ("--- %s seconds ---" % (time.time() - start_time))
+        query2()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query3()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query4()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query5()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query6()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query7()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query8()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query9()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query10()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
+        f.writelines(new_time)
+        start_time = time.time()
+        query11()
+        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
+        queryx +=1
         f.writelines(new_time)
         f.close()
 run_all()
