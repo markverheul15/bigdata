@@ -40,8 +40,8 @@ def query2():
             }
         }
     ])
-    for x in resultq2:
-        pprint(x)
+    # for x in resultq2:
+    #     pprint(x)
 
 # ✅Query 3: Which movies are in Dutch, order by title?
 def query3():
@@ -67,13 +67,13 @@ def query4():
         }
     ])
 
-    pprint(results4)
+    # pprint(results4)
 
 # ✅Query 5: Which all minors in name basics?
 def query5():
     q5 = coll_name_basics.find({ "$expr": { "$gte": [ { "$toInt": "$birthYear" }, 2003 ] } })
-    for x in q5:
-        print('{0}'.format(x['primaryName']))
+    # for x in q5:
+    #     print('{0}'.format(x['primaryName']))
 
 # Query 6: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
 def query6():
@@ -110,9 +110,9 @@ def query6():
     ]
 
     results = coll_title_rating.aggregate(query6)
-
-    for movie in results:
-        print('{0}{1}'.format(movie['title'],movie['averageRating']))
+    #
+    # for movie in results:
+    #     print('{0}{1}'.format(movie['title'],movie['averageRating']))
 
 # Query 7: Which actors play in Inception?
 def query7():
@@ -149,8 +149,8 @@ def query9():
                {"nconst":"uva2", "primaryName":"Graeme Bruijn", "birthYear":"1995", "primaryProfession":"student data science"},
                {"nconst":"uva3", "primaryName":"Lex Poon", "birthYear":"1996", "primaryProfession":"student data science"},
                {"nconst":"uva4","primaryName": "Mark Verheul", "birthYear":"1994", "primaryProfession":"student data science"}]
-    for doc in docs:
-        coll_name_basics.save(doc)
+    # for doc in docs:
+    #     coll_name_basics.save(doc)
 
     # resultsq9 = coll_name_basics.find({"primaryProfession":"student data science"})
     # for x in resultsq9:
