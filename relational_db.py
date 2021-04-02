@@ -94,6 +94,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
         else:
             print("{} dataset has been inserted".format(table))
             print("--- %s seconds ---" % (time.time() - start_time))
+
     return 0
 
 
