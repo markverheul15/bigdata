@@ -49,12 +49,13 @@ def execute_read_query(connection, query):
 
 # Execute single query
 def run_single_query(query_x):
+    print("Query just started")
     start_time = time.time()
     query = execute_read_query(connection, query_x)
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    for row in query:
-        print(row)
+    # for row in query:
+    #     print(row)
 
     return 0
 
@@ -63,16 +64,20 @@ def run_all_queries(list_of_queries):
     f = open("times_mysql.txt", "a")
     queryx = 2
     for query in list_of_queries:
+        print("Query {}: just started".format(queryx))
         start_time = time.time()
         query = execute_read_query(connection, query)
         new_time = ("Query%s %s seconds ---\n" % (queryx, (time.time() - start_time)))
         f.writelines(new_time)
-
+        print("Query%s: --- %s seconds ---" % (queryx, time.time() - start_time))
         # optional: uncomment is you want to print it
         # for row in query:
         #     print(row)
 
         queryx += 1
+
+    f.close()
+    return 0
 
 
 # Query 2: Which IMDB info is from the Netherlands, order by title?
@@ -147,6 +152,7 @@ FROM IMDB_movie_2020.title_rating;
 
 # Query 10: Remove all non original from akas table
 remove_non_originals = """
+SET SQL_SAFE_UPDATES = 0;
 DELETE FROM IMDB_movie_2020.title_akas WHERE isOriginalTitle = 0;
 """
 
@@ -163,6 +169,6 @@ DELETE FROM IMDB_movie_2020.title_akas WHERE isOriginalTitle = 0;
 all_queries = [imdb_NL, rom_com, minors, movies_top250, inception,
                lake_to_sea, add_students, recommended, remove_non_originals]
 
-# run_single_query(movies_top250)
+# run_single_query(remove_non_originals)
 
 run_all_queries(all_queries)

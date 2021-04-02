@@ -4,5 +4,13 @@ title_crew dataset took 144.22597885131836 seconds ---
 title_basic dataset took 272.17254304885864 seconds ---
 name_basics dataset took 322.06237602233887 seconds ---
 title_akas dataset took 753.9921100139618 seconds ---
-Query2 11.724434852600098 seconds ---
-Query3 0.39646482467651367 seconds ---
+Query2 16.501662015914917 seconds ---
+Query3 6.274590969085693 seconds ---
+Query4 9.50357723236084 seconds ---
+Query5 0.32712316513061523 seconds ---
+Query6 15.935325145721436 seconds ---
+Query7 7.815869331359863 seconds ---
+Query8 0.030775785446166992 seconds ---
+Query9 0.957942008972168 seconds ---
+Query10 0.0017337799072265625 seconds ---
+
