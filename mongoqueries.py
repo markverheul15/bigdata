@@ -171,7 +171,7 @@ def query11():
 
 def run_all():
     queryx = 1
-    with open('times_mongodb.txt', mode='w') as f:
+    with open('times_mongodb.txt', mode='a') as f:
         start_time = time.time()
         query1()
         new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
