@@ -77,7 +77,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
 
         # Insert datasets into database table via pandas to SQL
         try:
-            if file != "title_rating.tsv":
+            if file != "title_akas.tsv":
                 continue
             chunk = pd.read_csv('IMDB_movie_2020/{}'.format(file), sep='\t', chunksize=1000000,
                                 low_memory=False)
