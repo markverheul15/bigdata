@@ -16,7 +16,7 @@ coll_title_basic = db["title_basic"]
 coll_title_crew = db["title_crew"]
 coll_title_rating = db["title_rating"]
 
-# ✅Query 1: Change "\N" values from name_basics table to "0"
+# Query 1: Change "\N" values from name_basics table to "0"
 def query1():
     coll_name_basics.update_many(
         {"birthYear": { "$eq": '\\N'}},
@@ -27,7 +27,7 @@ def query1():
         { "$set": {"deathYear": '0'}}
     )
 
-# ✅Query 2: Which IMDB info is from the Netherlands, order by title?
+# Query 2: Which IMDB info is from the Netherlands, order by title?
 def query2():
     resultq2 = coll_title_akas.aggregate([
         {
@@ -44,7 +44,7 @@ def query2():
     #     pprint(x)
 
 
-# ✅Query 3: How many movies are rom-com?
+# Query 3: How many movies are rom-com?
 def query3():
     results4 = coll_title_basic.aggregate([
         {
@@ -66,7 +66,7 @@ def query3():
 
     # pprint(results4)
 
-# ✅Query 4: Which actors minors in name basics?
+# Query 4: Which actors minors in name basics?
 def query4():
     q5 = coll_name_basics.find({ "$expr": { "$gte": [ { "$toInt": "$birthYear" }, 2003 ] } })
     # for x in q5:
@@ -140,7 +140,7 @@ def query7():
         { "$set": {"originalTitle": "sea"}}
     )
 
-# ✅Query 9: Add four new rows in name_basics (personal information)
+# Query 9: Add four new rows in name_basics (personal information)
 def query8():
 
     docs =	[{"nconst":"uva1", "primaryName":"Julia Holst", "birthYear": "1997", "primaryProfession":"student data science"},
@@ -154,7 +154,7 @@ def query8():
     # for x in resultsq9:
     #     print('{0}'.format(x['primaryName']))
 
-# ✅Query 10: Add recommended column based on rating 8+
+# Query 10: Add recommended column based on rating 8+
 def query9():
 
     coll_title_rating.update_many({"averageRating": {'$gte': 8}}, {"$set": {"tip": "Watch this"}}, upsert=False, array_filters=None)
@@ -163,7 +163,7 @@ def query9():
     # for y in x:
     #     print(y['averageRating'], y['tip'])
 
-# ✅Query 11: Remove all non original from akas table
+# Query 11: Remove all non original from akas table
 def query10():
     coll_title_akas.delete_many({ "isOriginalTitle":0})
 
@@ -217,20 +217,6 @@ def run_all():
         queryx +=1
         f.writelines(new_time)
         f.close()
-# run_all()
-query1()
-start_time = time.time()
-query4()
-print(("Query %s seconds ---\n" %(time.time() - start_time)))
-# ✅Query 1: Change "\N" values from name_basics table to "0"
-# ✅Query 2: Which IMDB info is from the Netherlands, order by title?
-# Query 3: Which movies are in Dutch, order by title?
-# ✅Query 4: How many movies are comedy (removed romantic)?
-# ✅Query 5: Which actors are a minor?
-# ✅Query 6: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
-# Query 7: Which actors play in Inception?
-# Query 8: Change all the words 'Lake' into 'Sea' in the title
-# ✅Query 9: Add four new rows in name_basics (personal information)
-# ✅Query 10: Add recommended column based on rating 8+
-# ✅Query 11: Remove all non original from akas table
+run_all()
+
 
