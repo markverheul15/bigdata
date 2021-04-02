@@ -32,6 +32,8 @@ def mongo_import(db_name, directory):
         next_time = ("%s dataset took %s seconds ---\n" % (table, (time.time() - start_time)))
         f.writelines(next_time)
 
+    f.close()
+
     return 0
 
 
