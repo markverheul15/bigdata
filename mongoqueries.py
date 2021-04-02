@@ -9,7 +9,7 @@ myclient = pymongo.MongoClient()
 from pprint import pprint
 
 cluster = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false")
-db = cluster["IMDB"]
+db = cluster["IMDB_movie_2020"]
 coll_name_basics = db["name_basics"]
 coll_title_akas = db["title_akas"]
 coll_title_basic = db["title_basic"]
@@ -43,12 +43,9 @@ def query2():
     # for x in resultq2:
     #     pprint(x)
 
-# ✅Query 3: Which movies are in Dutch, order by title?
-def query3():
-    pass
 
-# ✅Query 4: How many movies are rom-com?
-def query4():
+# ✅Query 3: How many movies are rom-com?
+def query3():
     results4 = coll_title_basic.aggregate([
         {
             '$match': {
@@ -69,14 +66,14 @@ def query4():
 
     # pprint(results4)
 
-# ✅Query 5: Which all minors in name basics?
-def query5():
+# ✅Query 4: Which all minors in name basics?
+def query4():
     q5 = coll_name_basics.find({ "$expr": { "$gte": [ { "$toInt": "$birthYear" }, 2003 ] } })
     # for x in q5:
     #     print('{0}'.format(x['primaryName']))
 
 # Query 6: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
-def query6():
+def query5():
     query6 = [
         {
             '$match': {
@@ -115,7 +112,7 @@ def query6():
     #     print('{0}{1}'.format(movie['title'],movie['averageRating']))
 
 # Query 7: Which actors play in Inception?
-def query7():
+def query6():
     x = coll_title_basic.aggregate([
         {
             '$match': {
@@ -136,14 +133,14 @@ def query7():
             pprint(y['primaryName'])
 
 # Query 8: Change all the words 'Lake' into 'Sea' in the title
-def query8():
+def query7():
     coll_title_basic.update_many(
         {"originalTitle": { "$regex" : ".*Lake.*"}},
         { "$set": {"originalTitle": "sea"}}
     )
 
 # ✅Query 9: Add four new rows in name_basics (personal information)
-def query9():
+def query8():
 
     docs =	[{"nconst":"uva1", "primaryName":"Julia Holst", "birthYear": "1997", "primaryProfession":"student data science"},
                {"nconst":"uva2", "primaryName":"Graeme Bruijn", "birthYear":"1995", "primaryProfession":"student data science"},
@@ -157,7 +154,7 @@ def query9():
     #     print('{0}'.format(x['primaryName']))
 
 # ✅Query 10: Add recommended column based on rating 8+
-def query10():
+def query9():
 
     coll_title_rating.update_many({"averageRating": {'$gte': 8}}, {"$set": {"tip": "Watch this"}}, upsert=False, array_filters=None)
     coll_title_rating.update_many({"averageRating": {'$lt': 8}}, {"$set": {"tip": "Skip this"}}, upsert=False, array_filters=None)
@@ -166,7 +163,7 @@ def query10():
     #     print(y['averageRating'], y['tip'])
 
 # ✅Query 11: Remove all non original from akas table
-def query11():
+def query10():
     coll_title_akas.delete_many({ "isOriginalTitle":0})
 
 def run_all():
@@ -219,11 +216,6 @@ def run_all():
         f.writelines(new_time)
         start_time = time.time()
         query10()
-        new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
-        queryx +=1
-        f.writelines(new_time)
-        start_time = time.time()
-        query11()
         new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
         queryx +=1
         f.writelines(new_time)
