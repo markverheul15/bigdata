@@ -69,6 +69,8 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
                                    db_name))
     dbConnection = engine.connect()
 
+    f = open("times_sql.txt", "w+")
+    f.writelines("Query1:\n")
     # Access all dataset files in directory
     for file in os.listdir(directory):
         print("{} will now be inserted into the MySQL dataset".format(file))
@@ -83,6 +85,8 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
             if file == "name_basics.tsv":
                 df.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
             df.to_sql(table, dbConnection, if_exists='append', chunksize=1000000, index=False)
+            next_time = ("%s dataset took %s seconds ---\n" % (table, (time.time() - start_time)))
+            f.writelines(next_time)
         except ValueError as vx:
             print(vx)
         except Exception as ex:

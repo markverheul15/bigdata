@@ -17,6 +17,8 @@ def mongo_import(db_name, directory):
         chunk = pd.read_csv('IMDB_movie_2020/{}'.format(file), sep='\t', chunksize=1000000,
                             low_memory=False)
         data = pd.concat(chunk)
+        if file == "name_basics.tsv":
+            data.drop_duplicates(subset=[df.columns[0]], keep='first', inplace=True)
         db = client[db_name]
         collection = db[table]
         data.reset_index(inplace=True)
