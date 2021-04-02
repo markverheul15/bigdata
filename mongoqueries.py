@@ -66,14 +66,15 @@ def query3():
 
     # pprint(results4)
 
-# ✅Query 4: Which all minors in name basics?
+# ✅Query 4: Which actors minors in name basics?
 def query4():
     q5 = coll_name_basics.find({ "$expr": { "$gte": [ { "$toInt": "$birthYear" }, 2003 ] } })
     # for x in q5:
     #     print('{0}'.format(x['primaryName']))
 
-# Query 6: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
-def query5():
+# Query 5: I want top 250 of mainstream imdb movies, defined by num_rating set at 100.000 ratings
+def query5():#
+    pass
     query6 = [
         {
             '$match': {
@@ -168,7 +169,7 @@ def query10():
 
 def run_all():
     queryx = 1
-    with open('times_mongodb.txt', mode='a') as f:
+    with open('times_mongo.txt', mode='a') as f:
         query1()
         start_time = time.time()
         query2()
@@ -216,8 +217,11 @@ def run_all():
         queryx +=1
         f.writelines(new_time)
         f.close()
-run_all()
-# query10()
+# run_all()
+query1()
+start_time = time.time()
+query4()
+print(("Query %s seconds ---\n" %(time.time() - start_time)))
 # ✅Query 1: Change "\N" values from name_basics table to "0"
 # ✅Query 2: Which IMDB info is from the Netherlands, order by title?
 # Query 3: Which movies are in Dutch, order by title?

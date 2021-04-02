@@ -1,0 +1,6 @@
+Query1:
+name_basics dataset took 0.0 seconds ---
+title_akas dataset took 0.0019571781158447266 seconds ---
+title_basic dataset took 0.0025854110717773438 seconds ---
+title_crew dataset took 0.0 seconds ---
+title_rating dataset took 0.0 seconds ---
