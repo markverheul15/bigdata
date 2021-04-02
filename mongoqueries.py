@@ -10,11 +10,11 @@ from pprint import pprint
 
 cluster = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false")
 db = cluster["IMDB"]
-coll_name_basics = db["Name_basics"]
-coll_title_akas = db["Title_Akas"]
-coll_title_basic = db["Title_Basic"]
-coll_title_crew = db["Title_Crew"]
-coll_title_rating = db["Title_rating"]
+coll_name_basics = db["name_basics"]
+coll_title_akas = db["title_akas"]
+coll_title_basic = db["title_basic"]
+coll_title_crew = db["title_crew"]
+coll_title_rating = db["title_rating"]
 
 # ✅Query 1: Change "\N" values from name_basics table to "0"
 def query1():
@@ -36,10 +36,6 @@ def query2():
             }
         }, {
             '$sort': {
-                'title': 1
-            }
-        }, {
-            '$project': {
                 'title': 1
             }
         }
@@ -73,7 +69,7 @@ def query4():
 
     pprint(results4)
 
-# ✅Query 5: Which actors are a minor?
+# ✅Query 5: Which all minors in name basics?
 def query5():
     q5 = coll_name_basics.find({ "$expr": { "$gte": [ { "$toInt": "$birthYear" }, 2003 ] } })
     for x in q5:
@@ -96,7 +92,7 @@ def query6():
             '$limit': 250
         }, {
             '$lookup': {
-                'from': 'Title_Basic',
+                'from': 'title_basic',
                 'localField': 'tconst',
                 'foreignField': 'tconst',
                 'as': 'titleid'
@@ -107,7 +103,8 @@ def query6():
             }
         }, {
             '$project': {
-                'title': '$titleid.primaryTitle'
+                'title': '$titleid.primaryTitle',
+                'averageRating':1
             }
         }
     ]
@@ -115,11 +112,28 @@ def query6():
     results = coll_title_rating.aggregate(query6)
 
     for movie in results:
-        print('{0}'.format(movie['title']))
+        print('{0}{1}'.format(movie['title'],movie['averageRating']))
 
 # Query 7: Which actors play in Inception?
 def query7():
-    pass
+    x = coll_title_basic.aggregate([
+        {
+            '$match': {
+                'titleType': 'movie'}},
+        {
+            '$match': {
+                'primaryTitle': 'Inception'}
+            }])
+    for iets in x:
+        titel = iets['tconst']
+        print(titel)
+        output = coll_name_basics.aggregate([{
+            "$match": {"primaryProfession": { "$regex" : ".*actor.*"}}},
+        {
+            "$match": {"knownForTitles":{ "$regex" : ".*%s.*"% titel}}}])
+
+        for y in output:
+            pprint(y['primaryName'])
 
 # Query 8: Change all the words 'Lake' into 'Sea' in the title
 def query8():
@@ -138,17 +152,18 @@ def query9():
     for doc in docs:
         coll_name_basics.save(doc)
 
-    resultsq9 = coll_name_basics.find({"primaryProfession":"student data science"})
-    for x in resultsq9:
-        print('{0}'.format(x['primaryName']))
+    # resultsq9 = coll_name_basics.find({"primaryProfession":"student data science"})
+    # for x in resultsq9:
+    #     print('{0}'.format(x['primaryName']))
 
 # ✅Query 10: Add recommended column based on rating 8+
 def query10():
 
-    coll_title_rating.update_many({"averageRating": {'$gte': 8}}, {"$set": {"Recommended": "Yes"}}, upsert=False, array_filters=None)
-    # coll_title_rating.update_many({"averageRating": {'$lt': 8}}, {"$set": {"Recommended": "No"}}, upsert=False, array_filters=None)
-    x =coll_title_rating.find_one({"averageRating": {"$gt":8}})
-    print(x)
+    coll_title_rating.update_many({"averageRating": {'$gte': 8}}, {"$set": {"tip": "Watch this"}}, upsert=False, array_filters=None)
+    coll_title_rating.update_many({"averageRating": {'$lt': 8}}, {"$set": {"tip": "Skip this"}}, upsert=False, array_filters=None)
+    x =coll_title_rating.find()
+    # for y in x:
+    #     print(y['averageRating'], y['tip'])
 
 # ✅Query 11: Remove all non original from akas table
 def query11():
@@ -156,7 +171,7 @@ def query11():
 
 def run_all():
     queryx = 1
-    with open('times.txt', mode='w') as f:
+    with open('times_mongodb.txt', mode='w') as f:
         start_time = time.time()
         query1()
         new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
@@ -168,7 +183,7 @@ def run_all():
         queryx +=1
         f.writelines(new_time)
         start_time = time.time()
-        query3()
+        # query3()
         new_time = ("Query%s %s seconds ---\n" %(queryx, (time.time() - start_time)))
         queryx +=1
         f.writelines(new_time)
@@ -214,6 +229,7 @@ def run_all():
         f.writelines(new_time)
         f.close()
 run_all()
+# query10()
 # ✅Query 1: Change "\N" values from name_basics table to "0"
 # ✅Query 2: Which IMDB info is from the Netherlands, order by title?
 # Query 3: Which movies are in Dutch, order by title?
