@@ -69,7 +69,7 @@ def mysql_import(host_name, user_name, user_password, db_name, directory):
                                    db_name))
     dbConnection = engine.connect()
 
-    f = open("times_sql.txt", "w+")
+    f = open("times_mysql.txt", "w+")
     f.writelines("Query1:\n")
     # Access all dataset files in directory
     for file in os.listdir(directory):

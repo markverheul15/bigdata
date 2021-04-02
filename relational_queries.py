@@ -146,11 +146,11 @@ def run_single_query(query_x):
 
     return 0
 
-run_single_query(movies_top250)
+# run_single_query(movies_top250)
 
 def run_all_queries(list_of_queries):
 
-    f = open("times_sql.txt", "a")
+    f = open("times_mysql.txt", "a")
     queryx = 2
     for query in list_of_queries:
         start_time = time.time()
